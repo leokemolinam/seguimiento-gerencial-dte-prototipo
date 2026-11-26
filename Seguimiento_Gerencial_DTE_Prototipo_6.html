@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Seguimiento gerencial DTE · Prototipo 6</title>
+  <meta name="description" content="Tablero interactivo para consultar el avance de proyectos estratégicos DTE." />
+  <style>
+:root{--ink:#111722;--muted:#767a81;--paper:#fff;--white:#fff;--orange:#ee8d1b;--red:#a52d30;--green:#347347;--blue:#355f88;--gray:#7a7e84;--line:#e9e9e9;--pale:#fff5e9;--soft:#fafafa}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--paper);color:var(--ink);font-size:16px}
+.topbar{min-height:92px;background:#fff;color:var(--ink);display:flex;align-items:center;gap:16px;padding:18px clamp(24px,3vw,48px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.brand-mark{width:50px;height:50px;display:grid;place-items:center;background:var(--orange);color:#fff;font-weight:750;border-radius:13px;box-shadow:0 8px 18px rgba(238,141,27,.18)}
+.eyebrow{margin:0 0 5px;text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;font-weight:700;color:#b36d18}
+.topbar h1{margin:0;font-size:clamp(1.2rem,2vw,1.78rem);font-weight:650;letter-spacing:-.04em}
+.header-actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+.cutoff{color:var(--muted);font-size:.86rem}
+.upload-btn,.secondary-btn{border:1px solid var(--line);border-radius:24px;background:#fff;color:var(--ink);padding:10px 18px;font-weight:650;cursor:pointer;font-size:.88rem;transition:.18s}
+.upload-btn{background:var(--ink);color:#fff;border-color:var(--ink)}
+.upload-btn:hover{background:#242b36}.secondary-btn:hover{background:var(--pale);border-color:#f4d4ad}
+main{padding:30px clamp(22px,4vw,64px) 60px;max-width:1540px;margin:auto}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px}
+.metrics article{background:linear-gradient(140deg,#fff 70%,#fffaf5);padding:22px 25px;min-height:112px;border:1px solid var(--line);border-radius:20px}
+.metrics strong{display:block;font-size:2.4rem;line-height:1;font-weight:650;letter-spacing:-.05em;margin-bottom:13px}
+.metrics span{color:var(--muted);font-weight:600;font-size:.92rem}
+.green{color:var(--green)}.red{color:var(--red)}.gray{color:var(--gray)}.red-text{color:#b36d18}
+.toolbar{display:grid;grid-template-columns:minmax(320px,1fr) 230px auto;gap:16px;align-items:end;margin:0 0 24px;padding:18px;background:var(--soft);border:1px solid #f2f2f2;border-radius:18px}
+.toolbar label{display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:7px}
+input,select{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px 14px;font:inherit;color:var(--ink);outline:none}
+input:focus,select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(238,141,27,.13)}
+.workspace{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(460px,1fr);gap:22px;align-items:start}
+.portfolio-panel,.detail-panel,.data-guide{background:#fff;border:1px solid var(--line);border-radius:22px}
+.portfolio-panel{padding:26px;box-shadow:0 16px 38px rgba(17,23,34,.04)}
+.section-heading{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+.section-heading h2,.data-guide h2{margin:0;font-size:1.55rem;font-weight:650;letter-spacing:-.035em}
+.section-heading>span{font-weight:650;color:var(--muted);font-size:.86rem;background:var(--pale);padding:7px 12px;border-radius:18px}
+.project-list{display:flex;flex-direction:column}
+.project-row{display:grid;grid-template-columns:38px minmax(230px,1.5fr) minmax(170px,1fr) 130px 88px;gap:14px;align-items:center;min-height:72px;padding:12px 7px;border-bottom:1px solid var(--line);cursor:pointer;transition:.16s ease;border-radius:12px}
+.project-row:hover,.project-row.active{background:var(--pale);padding-left:13px;padding-right:13px}
+.project-index{color:#a2a5aa;font-weight:700;font-size:.8rem;letter-spacing:.08em}
+.project-name{font-weight:650;line-height:1.28;letter-spacing:-.015em}
+.owner{color:var(--muted);font-size:.9rem;line-height:1.3}
+.status{display:inline-flex;align-items:center;gap:8px;font-size:.8rem;font-weight:650}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gray)}
+.status.en-curso::before{background:var(--green)}.status.bloqueado::before{background:var(--red)}.status.pendiente::before{background:var(--orange)}
+.progress{font-weight:650;text-align:right;color:var(--muted)}
+.detail-panel{position:sticky;top:116px;min-height:560px;padding:30px;box-shadow:0 18px 46px rgba(17,23,34,.08);background:linear-gradient(150deg,#fff 76%,#fffaf5)}
+.close-detail{display:none;position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:2rem;cursor:pointer}
+.detail-panel h2{font-size:1.8rem;margin:6px 0 9px;font-weight:650;letter-spacing:-.04em}.detail-panel .owner-line{color:var(--muted);margin:0 0 5px}.detail-panel .dependency-line{color:#9b611d;font-size:.82rem;font-weight:650;margin:0 0 18px}
+.detail-top{display:flex;justify-content:space-between;gap:18px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:22px}
+.status-large{display:inline-block;border:1px solid #f4d4ad;background:var(--pale);color:#9b611d;border-radius:20px;padding:6px 11px;font-size:.78rem;font-weight:700}
+.progress-ring{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--orange) calc(var(--p)*1%),#eee 0);position:relative;flex:0 0 auto}
+.progress-ring::after{content:"";position:absolute;inset:11px;background:#fff;border-radius:50%}.progress-ring strong{position:relative;z-index:1;font-size:1.22rem;font-weight:650}.advance-block{display:grid;justify-items:center;gap:7px;flex:0 0 auto}.advance-block>span{font-size:.7rem;color:var(--muted);font-weight:700;text-align:center}
+.detail-section{padding:19px 0;border-bottom:1px solid var(--line)}
+.detail-section span{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:#b36d18;font-weight:700;margin-bottom:8px}
+.detail-section p{margin:0;line-height:1.55;color:#555b65}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.detail-grid .detail-section{min-width:0}
+.meta-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 2px}.meta-card{padding:12px;border:1px solid var(--line);border-radius:13px;background:#fff}.meta-card span{display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:5px}.meta-card strong{font-size:.84rem;line-height:1.35;font-weight:650}
+.coverage-card{margin:20px 0 4px;padding:18px;border:1px solid var(--line);border-radius:17px;background:var(--soft)}
+.coverage-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:15px}.coverage-head h3{margin:0;font-size:1rem}.coverage-head strong{font-size:1.45rem;color:#b36d18}
+.coverage-row{display:grid;grid-template-columns:94px 1fr 38px;gap:10px;align-items:center;margin:10px 0;font-size:.76rem;color:#60656d}.coverage-track{height:9px;background:#e7e8ea;border-radius:8px;overflow:hidden}.coverage-fill{height:100%;background:linear-gradient(90deg,var(--orange),#f2b35f);border-radius:8px}.coverage-note{margin:13px 0 0;font-size:.72rem;color:var(--muted);line-height:1.45}
+.commitment{padding:14px;border-left:3px solid var(--orange);background:var(--pale);border-radius:0 12px 12px 0}.commitment small{display:block;color:var(--muted);margin-top:7px}
+.empty-value{color:#a1a4aa;font-style:italic}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--ink);color:#fff;padding:14px 20px;border-radius:12px;opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s;z-index:30}.toast.show{opacity:1;transform:none}
+body.presentation{background:#fffaf5}body.presentation .topbar{position:relative}body.presentation main{max-width:none;padding-top:20px}body.presentation .data-guide{display:none}body.presentation .portfolio-panel{max-height:calc(100vh - 240px);overflow:auto}body.presentation .detail-panel{top:20px}
+.presentation-shell{position:fixed;inset:0;z-index:100;background:#edf1f5;display:none;grid-template-rows:minmax(0,1fr) auto;overflow:hidden}.presentation-shell.open{display:grid}.presentation-stage{min-height:0;display:grid;place-items:center;padding:20px}.presentation-slide{position:relative;width:min(1280px,calc((100vh - 105px)*1.7777),calc(100vw - 40px));aspect-ratio:16/9;background:#fff;box-shadow:0 22px 55px rgba(17,23,34,.18);overflow:hidden}.presentation-controls{display:flex;align-items:center;justify-content:center;gap:10px;min-height:70px;padding:10px 18px;background:#fff;border-top:1px solid var(--line)}.presentation-controls button{border:1px solid #d9dee5;background:#fff;color:var(--ink);border-radius:22px;padding:9px 15px;font:inherit;font-size:.82rem;font-weight:650;cursor:pointer}.presentation-controls button.primary{background:#0b4f94;color:#fff;border-color:#0b4f94}.presentation-controls button:disabled{opacity:.35;cursor:not-allowed}.presentation-counter{min-width:72px;text-align:center;color:var(--muted);font-size:.82rem;font-weight:700}.ps-brand{position:absolute;left:4.2%;top:5.2%;display:flex;align-items:center;gap:12px}.ps-mark{width:45px;height:45px;border-radius:10px;background:var(--orange);color:#fff;display:grid;place-items:center;font-weight:800}.ps-brand-text{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#a56619;font-weight:750}.ps-footer{position:absolute;left:4.2%;right:4.2%;bottom:3.4%;border-top:1px solid #cdd3da;padding-top:8px;display:flex;justify-content:space-between;color:#737983;font-size:.62rem}.ps-orange-line{position:absolute;left:0;right:0;bottom:0;height:8px;background:var(--orange)}.ps-cover{background:#e8f4fb}.ps-cover-image{position:absolute;inset:0 35% 0 0;background:url('./assets/portada-aerea.png') center/cover no-repeat}.ps-cover-panel{position:absolute;inset:0 0 0 65%;padding:18% 5.5% 7%;display:flex;flex-direction:column}.ps-number{color:#0b4f94;font-weight:800;font-size:1.1rem}.ps-cover h2{font-size:clamp(1.8rem,3vw,3.15rem);line-height:1.02;color:#0b4f94;margin:9% 0 6%;letter-spacing:-.045em}.ps-cover p{font-size:clamp(.8rem,1.2vw,1.25rem);line-height:1.45;margin:0;color:#2d3b4e}.ps-cover-meta{margin-top:auto;color:#667383;font-size:clamp(.68rem,.9vw,.95rem)}.ps-summary,.ps-project{padding:10.5% 4.2% 7%}.ps-title{position:absolute;left:4.2%;top:5.3%;color:#0b4f94;font-size:clamp(1.35rem,2.2vw,2.35rem);font-weight:650;letter-spacing:-.035em}.ps-subtitle{position:absolute;left:4.2%;top:12.2%;color:var(--muted);font-size:clamp(.68rem,.9vw,.92rem)}.ps-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5%;margin-bottom:3%}.ps-kpi{border:1px solid #dfe4ea;border-radius:14px;padding:6% 7%;background:#fff}.ps-kpi span{display:block;font-size:clamp(.52rem,.72vw,.74rem);text-transform:uppercase;letter-spacing:.08em;color:#747b84;font-weight:750}.ps-kpi strong{display:block;margin-top:5%;font-size:clamp(1.45rem,2.5vw,2.65rem);color:#173c6b}.ps-summary-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:3%;height:59%}.ps-card{border:1px solid #dfe4ea;border-radius:14px;padding:4%;overflow:hidden}.ps-card h3{margin:0 0 3%;font-size:clamp(.8rem,1.2vw,1.15rem);color:#173c6b}.ps-portfolio-row{display:grid;grid-template-columns:1fr auto;gap:8px;padding:1.25% 0;border-bottom:1px solid #edf0f3;font-size:clamp(.55rem,.78vw,.78rem)}.ps-portfolio-row b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ps-pill{display:inline-flex;align-items:center;padding:3px 8px;border-radius:12px;font-size:clamp(.48rem,.66vw,.68rem);font-weight:750;background:#ecefea;color:#59625e}.ps-pill.en-curso{background:#e2f2e8;color:#2e7d4f}.ps-pill.bloqueado{background:#fbe4e1;color:#a52d30}.ps-pill.pendiente{background:#fcf1cf;color:#9a6a00}.ps-decision{padding:2.5% 0 2.5% 4%;border-left:4px solid var(--orange);margin-bottom:3%;font-size:clamp(.53rem,.76vw,.78rem);line-height:1.35}.ps-project-head{position:absolute;left:4.2%;right:4.2%;top:5%;display:flex;justify-content:space-between;gap:3%}.ps-project-head h2{margin:0;color:#0b4f94;font-size:clamp(1.3rem,2.25vw,2.4rem);line-height:1.05;letter-spacing:-.04em}.ps-project-head p{margin:6px 0 0;color:#687386;font-size:clamp(.62rem,.85vw,.9rem)}.ps-score{width:12%;min-width:85px;border-radius:12px;background:var(--orange);color:#fff;padding:1.1% 1.4%;text-align:center}.ps-score strong{display:block;font-size:clamp(1.3rem,2.35vw,2.45rem)}.ps-score span{font-size:clamp(.47rem,.65vw,.68rem);font-weight:700}.ps-project-grid{display:grid;grid-template-columns:1.1fr .9fr .9fr;gap:1.5%;height:70%;margin-top:3%}.ps-project-card{border:1px solid #dfe4ea;border-radius:14px;padding:5%;overflow:hidden}.ps-project-card h3{font-size:clamp(.68rem,1vw,1rem);color:#173c6b;margin:0 0 5%}.ps-project-card p{font-size:clamp(.54rem,.78vw,.8rem);line-height:1.45;color:#3e4652;margin:0 0 5%}.ps-label{font-size:clamp(.48rem,.66vw,.68rem);color:#b36d18;text-transform:uppercase;letter-spacing:.09em;font-weight:750;margin-bottom:2%}.ps-highlight{background:#fff3e4;border-left:4px solid var(--orange);padding:4%;border-radius:0 10px 10px 0}.ps-risk{border-left-color:#a52d30;background:#fdf0ef}.ps-bars{display:grid;gap:5%}.ps-bar{display:grid;grid-template-columns:31% 1fr 28px;gap:7px;align-items:center;font-size:clamp(.48rem,.65vw,.68rem);color:#687386}.ps-track{height:8px;border-radius:5px;background:#e8ebef;overflow:hidden}.ps-fill{height:100%;background:linear-gradient(90deg,var(--orange),#f4ba67)}
+.ps-portfolio-list{display:grid;grid-template-columns:1fr 1fr;column-gap:4%}.ps-portfolio-list .ps-portfolio-row{padding:2.1% 0;font-size:clamp(.49rem,.69vw,.7rem)}.ps-portfolio-list .ps-pill{padding:2px 6px;font-size:clamp(.43rem,.58vw,.6rem)}
+.ps-template-full{display:block;width:100%;height:100%;object-fit:cover}
+.ps-institutional-cover{position:relative;width:100%;height:100%}.ps-cover-title{position:absolute;left:7.5%;top:41%;width:34%;margin:0;color:#0b315d;font-size:clamp(1.25rem,2.45vw,2.7rem);line-height:1.08;letter-spacing:-.025em;font-weight:750;text-transform:uppercase}
+
+/* Prototipo 5: tipografía optimizada para lectura en pantalla y exportación 16:9 */
+.ps-brand-text{font-size:clamp(.74rem,.88vw,.94rem)}
+.ps-footer{font-size:clamp(.68rem,.78vw,.8rem);padding-top:10px}
+.ps-cover-title{font-size:clamp(1.8rem,3vw,3.35rem);line-height:1.06;width:38%}
+.ps-cover p{font-size:clamp(1rem,1.38vw,1.4rem)}
+.ps-cover-meta{font-size:clamp(.82rem,1vw,1.05rem)}
+.ps-title{font-size:clamp(1.75rem,2.65vw,2.75rem)}
+.ps-subtitle{font-size:clamp(.82rem,1.03vw,1.08rem)}
+.ps-kpi span{font-size:clamp(.66rem,.82vw,.86rem)}
+.ps-kpi strong{font-size:clamp(1.8rem,2.85vw,3rem)}
+.ps-card h3{font-size:clamp(1rem,1.35vw,1.4rem)}
+.ps-portfolio-row{font-size:clamp(.68rem,.88vw,.92rem)}
+.ps-portfolio-list .ps-portfolio-row{padding:1.75% 0;font-size:clamp(.64rem,.8vw,.84rem)}
+.ps-pill,.ps-portfolio-list .ps-pill{font-size:clamp(.59rem,.72vw,.75rem);padding:3px 7px}
+.ps-decision{font-size:clamp(.66rem,.88vw,.92rem);line-height:1.38;padding:2% 0 2% 3.5%;margin-bottom:2.2%}
+.ps-project-head h2{font-size:clamp(1.7rem,2.6vw,2.75rem);line-height:1.04}
+.ps-project-head p{font-size:clamp(.76rem,1vw,1.05rem)}
+.ps-score strong{font-size:clamp(1.65rem,2.65vw,2.8rem)}
+.ps-score span{font-size:clamp(.58rem,.76vw,.8rem)}
+.ps-project-grid{grid-template-columns:1.08fr .96fr .96fr;gap:1.35%;height:70%;margin-top:2.5%}
+.ps-project-card{padding:4.2%}
+.ps-project-card h3{font-size:clamp(.9rem,1.2vw,1.25rem);margin-bottom:4%}
+.ps-project-card p{font-size:clamp(.72rem,1.03vw,1.06rem);line-height:1.35;margin-bottom:4%}
+.ps-label{font-size:clamp(.61rem,.78vw,.82rem);margin-bottom:1.5%}
+.ps-highlight{padding:3.5%}
+.ps-bars{gap:4%}
+.ps-bar{grid-template-columns:32% 1fr 34px;font-size:clamp(.6rem,.77vw,.8rem)}
+.ps-track{height:10px}
+@media(max-width:1000px){.workspace{grid-template-columns:1fr}.detail-panel{position:fixed;inset:0 0 0 18%;z-index:20;overflow:auto;transform:translateX(110%);transition:.25s}.detail-panel.open{transform:none}.close-detail{display:block}.guide-grid{grid-template-columns:1fr 1fr}.project-row{grid-template-columns:32px 1fr 130px}.project-row .owner,.project-row .progress{display:none}}
+@media(max-width:700px){.topbar{align-items:flex-start;flex-wrap:wrap}.header-actions{width:100%;margin:0}.cutoff{display:none}.metrics{grid-template-columns:1fr 1fr;gap:10px}.toolbar{grid-template-columns:1fr}.project-row{grid-template-columns:26px 1fr}.project-row .status{display:none}.guide-grid{grid-template-columns:1fr}.detail-panel{inset:0}.meta-strip{grid-template-columns:1fr}.coverage-row{grid-template-columns:82px 1fr 34px}}
+
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark">DTE</div>
+    <div>
+      <p class="eyebrow">Dirección Técnica y de Estructuración · Prototipo 6</p>
+      <h1>Seguimiento de proyectos estratégicos</h1>
+    </div>
+    <div class="header-actions">
+      <span id="cutoffLabel" class="cutoff">Sin datos precargados · Cargue el Excel</span>
+      <label class="upload-btn" for="excelInput">Cargar Excel</label>
+      <input id="excelInput" type="file" accept=".xlsx,.xls,.csv" hidden />
+    </div>
+  </header>
+
+  <main>
+    <section class="metrics" aria-label="Resumen ejecutivo">
+      <article><strong id="totalMetric">14</strong><span>Total proyectos</span></article>
+      <article><strong id="activeMetric" class="green">7</strong><span>En curso</span></article>
+      <article><strong id="alertMetric" class="red">4</strong><span>Requieren atención</span></article>
+      <article><strong id="missingMetric" class="gray">2</strong><span>Sin información</span></article>
+    </section>
+
+    <section class="toolbar">
+      <div class="search-wrap">
+        <label for="searchInput">Buscar proyecto o responsable</label>
+        <input id="searchInput" type="search" placeholder="Ej. Dragado, Carlos Hernán..." />
+      </div>
+      <div class="filter-wrap">
+        <label for="statusFilter">Estado</label>
+        <select id="statusFilter">
+          <option value="">Todos</option>
+          <option>En curso</option>
+          <option>Bloqueado</option>
+          <option>Pendiente</option>
+          <option>Sin información</option>
+          <option>Sin actividad asociada</option>
+        </select>
+      </div>
+      <button id="presentationToggle" class="secondary-btn" type="button">Modo presentación</button>
+    </section>
+
+    <section class="workspace">
+      <div class="portfolio-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow red-text">Portafolio estratégico</p>
+            <h2>Actividades y responsables</h2>
+          </div>
+          <span id="resultCount">14 proyectos</span>
+        </div>
+        <div id="projectList" class="project-list" aria-live="polite"></div>
+      </div>
+
+      <aside id="detailPanel" class="detail-panel" aria-label="Detalle del proyecto">
+        <button id="closeDetail" class="close-detail" type="button" aria-label="Cerrar detalle">×</button>
+        <div id="detailContent"></div>
+      </aside>
+    </section>
+
+  </main>
+
+  <section id="presentationShell" class="presentation-shell" aria-hidden="true">
+    <div class="presentation-stage"><div id="presentationSlide" class="presentation-slide"></div></div>
+    <nav class="presentation-controls" aria-label="Controles de presentación">
+      <button id="presentationPrev" type="button">Anterior</button>
+      <span id="presentationCounter" class="presentation-counter">1 / 1</span>
+      <button id="presentationNext" type="button">Siguiente</button>
+      <button id="presentationFullscreen" type="button">Pantalla completa</button>
+      <button id="presentationExport" class="primary" type="button">Exportar PowerPoint</button>
+      <button id="presentationExportPdf" class="primary" type="button">Exportar PDF</button>
+      <button id="presentationClose" type="button">Salir</button>
+    </nav>
+  </section>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script>
+const initialProjects = [];
+
+const enrichedData = {};
+
+function hasData(value){return value!==undefined&&value!==null&&String(value).trim()!==''&&!/por (definir|confirmar)|sin informaci[oó]n|no aplica/i.test(String(value))}
+function reportedAdvance(p){const v=p.progress;return v===null||v===undefined||v===''||Number.isNaN(Number(v))?null:Math.max(0,Math.min(100,Number(v)))}
+function advanceText(p){const v=reportedAdvance(p);return v===null?'—':`${Math.round(v)}%`}
+function coverage(p){
+  const groups={
+    'Identificación':[p.projectId,p.intervention,p.dependency],
+    'Territorio':[p.department,p.municipalities,p.tramo],
+    'Seguimiento':[p.current,p.goal,p.cutoff,p.source,p.status,p.phase],
+    'Gestión':[p.next,p.risk,p.decision,p.review,p.commitment]
+  };
+  const detail=Object.entries(groups).map(([label,values])=>({label,score:Math.round(values.filter(hasData).length/values.length*100)}));
+  return {detail,total:Math.round(detail.reduce((a,b)=>a+b.score,0)/detail.length)};
+}
+
+let projects = initialProjects.map(p=>({...p}));
+let selectedId = null;
+const list = document.querySelector('#projectList');
+const detailContent = document.querySelector('#detailContent');
+const searchInput = document.querySelector('#searchInput');
+const statusFilter = document.querySelector('#statusFilter');
+
+function slugStatus(value){return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-')}
+function esc(value=''){return String(value).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function filteredProjects(){
+  const term=searchInput.value.toLowerCase().trim();
+  const status=statusFilter.value;
+  return projects.filter(p=>(!status||p.status===status)&&(!term||`${p.name} ${p.owner}`.toLowerCase().includes(term)));
+}
+
+function renderList(){
+  const rows=filteredProjects();
+  document.querySelector('#resultCount').textContent=`${rows.length} proyecto${rows.length===1?'':'s'}`;
+  list.innerHTML=rows.map(p=>`<article class="project-row ${p.id===selectedId?'active':''}" tabindex="0" data-id="${p.id}">
+    <span class="project-index">${String(p.id).padStart(2,'0')}</span>
+    <span class="project-name">${esc(p.name)}</span>
+    <span class="owner">${esc(p.owner)}</span>
+    <span class="status ${slugStatus(p.status)}">${esc(p.status)}</span>
+    <span class="progress" title="Avance reportado">${advanceText(p)}</span>
+  </article>`).join('') || '<p>No hay datos cargados. Use el botón Cargar Excel para iniciar.</p>';
+  list.querySelectorAll('.project-row').forEach(row=>{
+    const open=()=>selectProject(Number(row.dataset.id));
+    row.addEventListener('click',open);row.addEventListener('keydown',e=>{if(e.key==='Enter')open()});
+  });
+}
+
+function selectProject(id){selectedId=id;renderList();renderDetail();document.querySelector('#detailPanel').classList.add('open')}
+function renderDetail(){
+  const p=projects.find(x=>x.id===selectedId)||projects[0]; if(!p)return;
+  const c=coverage(p);
+  const value=(v,fallback='Pendiente de diligenciar')=>hasData(v)?esc(v):`<span class="empty-value">${fallback}</span>`;
+  const territorial=[p.department,p.municipalities,p.tramo].filter(hasData).join(' · ');
+  const quantitative=[p.physicalExec,p.physicalPlan,p.financial].some(hasData);
+  const quantitativeChart=quantitative?`<div class="coverage-card"><div class="coverage-head"><h3>Indicadores físico y financiero</h3></div>${[['Físico ejecutado',p.physicalExec],['Físico programado',p.physicalPlan],['Financiero',p.financial]].map(([label,v])=>`<div class="coverage-row"><span>${label}</span><div class="coverage-track"><div class="coverage-fill" style="width:${Number(v)||0}%"></div></div><b>${Number(v)||0}%</b></div>`).join('')}</div>`:'';
+  detailContent.innerHTML=`<p class="eyebrow red-text">Ficha del proyecto</p>
+  <div class="detail-top"><div><h2>${esc(p.name)}</h2><p class="owner-line">${esc(p.owner)}</p><p class="dependency-line">${value(p.dependency,'Dependencia pendiente')}</p><span class="status-large">${esc(p.status)}</span></div>
+  <div class="advance-block"><div class="progress-ring" style="--p:${reportedAdvance(p)??0}" title="Avance reportado"><strong>${advanceText(p)}</strong></div><span>Avance reportado</span></div></div>
+  ${quantitativeChart}
+  <div class="detail-grid"><div class="detail-section"><span>Fase actual</span><p>${value(p.phase)}</p></div><div class="detail-section"><span>Cifra principal</span><p>${value(p.quantity)}</p></div></div>
+  <div class="detail-section"><span>Intervención</span><p>${value(p.intervention)}</p></div>
+  <div class="detail-section"><span>Ubicación / tramo</span><p>${value(territorial)}</p></div>
+  <div class="detail-section"><span>Estado actual</span><p>${esc(p.current)}</p></div>
+  <div class="detail-section"><span>Compromiso</span><div class="commitment">${value(p.commitment)}<small>Estado: ${value(p.commitmentStatus)}</small></div></div>
+  <div class="detail-section"><span>Meta a 31 de Dic</span><p>${esc(p.goal)}</p></div>
+  <div class="detail-section"><span>Decisión requerida</span><p>${value(p.decision,'Sin decisión registrada')}</p></div>
+  `;
+}
+
+async function exportProjectPpt(p){
+  const button=document.querySelector('#exportPptBtn');
+  if(!window.PptxGenJS){showToast('No fue posible cargar el generador de PowerPoint.');return}
+  button.disabled=true;button.textContent='Generando presentación...';
+  try{
+    const pptx=new PptxGenJS();
+    pptx.layout='LAYOUT_WIDE';
+    pptx.author='Dirección Técnica y de Estructuración - INVÍAS';
+    pptx.subject=`Seguimiento de ${p.name}`;
+    pptx.title=`${p.projectId||''} ${p.name}`.trim();
+    pptx.company='Instituto Nacional de Vías';
+    pptx.lang='es-CO';
+    pptx.theme={headFontFace:'Aptos Display',bodyFontFace:'Aptos',lang:'es-CO'};
+
+    const C={blue:'0B4F94',navy:'173C6B',orange:'FF8A17',amber:'FFB914',pale:'E7F4FC',ink:'142033',muted:'687386',white:'FFFFFF',line:'D9E1E8',soft:'F5F7F9',red:'A52D30',green:'347347'};
+    const shape=pptx.ShapeType;
+    const safe=v=>hasData(v)?String(v):'Pendiente de diligenciar';
+    const statusColor=p.status==='Bloqueado'?C.red:p.status==='En curso'?C.green:p.status==='Pendiente'?C.orange:C.muted;
+    const addBrand=(slide,light=false)=>{
+      slide.addShape(shape.rect,{x:12.45,y:.28,w:.26,h:.26,rotate:45,fill:{color:C.orange},line:{color:C.orange}});
+      slide.addText('INVIAS',{x:12.68,y:.22,w:.48,h:.22,fontFace:'Aptos',fontSize:8,bold:true,color:light?C.white:C.ink,margin:0});
+    };
+    const addFooter=slide=>{
+      slide.addShape(shape.rect,{x:0,y:7.43,w:13.333,h:.07,fill:{color:C.orange},line:{color:C.orange}});
+      slide.addText('www.invias.gov.co',{x:.5,y:7.15,w:1.25,h:.16,fontFace:'Aptos',fontSize:6,color:C.muted,margin:0});
+      addBrand(slide);
+    };
+    const addLabel=(slide,label,x,y,w)=>slide.addText(label.toUpperCase(),{x,y,w,h:.18,fontFace:'Aptos',fontSize:7.5,bold:true,color:C.orange,charSpacing:1.1,margin:0});
+    const addBlock=(slide,label,text,x,y,w,h,accent=C.orange)=>{
+      addLabel(slide,label,x,y,w);
+      slide.addShape(shape.rect,{x,y:y+.28,w:.035,h:h-.28,fill:{color:accent},line:{color:accent}});
+      slide.addText(safe(text),{x:x+.16,y:y+.25,w:w-.16,h:h-.22,fontFace:'Aptos',fontSize:11,color:C.ink,margin:.04,breakLine:false,fit:'shrink',valign:'top'});
+    };
+
+    const toDataUrl=async url=>{
+      const response=await fetch(url);
+      if(!response.ok)throw new Error(`No se pudo cargar la imagen de plantilla: ${url}`);
+      const blob=await response.blob();
+      return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob)});
+    };
+    const [aerialImage,roadImage]=await Promise.all([
+      toDataUrl('./assets/portada-aerea.png'),
+      toDataUrl('./assets/carretera-contenido.png')
+    ]);
+
+    // Portada basada específicamente en la diapositiva 3 del archivo de referencia.
+    let slide=pptx.addSlide();
+    slide.background={color:C.pale};
+    slide.addImage({data:aerialImage,x:0,y:0,w:8.72,h:7.5});
+    slide.addShape(shape.rect,{x:8.72,y:0,w:4.613,h:7.5,fill:{color:C.pale},line:{color:C.pale}});
+    slide.addText('01.',{x:9.35,y:1.35,w:.85,h:.38,fontFace:'Aptos Display',fontSize:20,bold:true,color:C.blue,margin:0});
+    slide.addText(p.name,{x:9.35,y:2.15,w:3.15,h:1.45,fontFace:'Aptos Display',fontSize:25,bold:true,color:C.blue,margin:0,fit:'shrink',valign:'mid'});
+    slide.addText(`${p.projectId||'Actividad estratégica'}\n${p.status}`,{x:9.35,y:4.08,w:2.9,h:.7,fontFace:'Aptos',fontSize:12,bold:true,color:statusColor,margin:0,breakLine:false,fit:'shrink'});
+    slide.addText(`Responsable\n${safe(p.owner)}`,{x:9.35,y:5.05,w:3.1,h:.7,fontFace:'Aptos',fontSize:10,color:C.ink,margin:0,breakLine:false,fit:'shrink'});
+    slide.addText(`Corte: ${safe(p.cutoff)}`,{x:9.35,y:6.18,w:2.5,h:.22,fontFace:'Aptos',fontSize:8,color:C.muted,margin:0});
+    slide.addText('www.invias.gov.co',{x:9.35,y:6.85,w:1.5,h:.18,fontFace:'Aptos',fontSize:6,color:C.muted,margin:0});
+    addBrand(slide);
+
+    // Ficha gerencial basada específicamente en la diapositiva 4 del archivo de referencia.
+    slide=pptx.addSlide();
+    slide.background={color:C.white};
+    slide.addImage({data:roadImage,x:7.75,y:0,w:5.583,h:7.5});
+    slide.addText(p.name,{x:.58,y:.55,w:6.55,h:.55,fontFace:'Aptos Display',fontSize:23,bold:false,color:C.blue,margin:0,fit:'shrink'});
+    slide.addText(`${p.projectId||''}  ${p.status}`.trim(),{x:.6,y:1.18,w:3.5,h:.24,fontFace:'Aptos',fontSize:9,bold:true,color:statusColor,margin:0});
+    const cov=coverage(p);
+    slide.addText('Avance reportado',{x:.6,y:1.65,w:3.3,h:.27,fontFace:'Aptos',fontSize:13,bold:true,color:C.ink,margin:0});
+    slide.addText(advanceText(p),{x:3.72,y:1.58,w:.72,h:.35,fontFace:'Aptos Display',fontSize:18,bold:true,color:C.orange,align:'right',margin:0});
+    cov.detail.forEach((d,i)=>{
+      const y=2.08+i*.4;
+      slide.addText(d.label,{x:.62,y,w:1.18,h:.18,fontFace:'Aptos',fontSize:8,color:C.muted,margin:0});
+      slide.addShape(shape.roundRect,{x:1.78,y:y+.02,w:2.15,h:.12,rectRadius:.05,fill:{color:'E8EBEF'},line:{color:'E8EBEF'}});
+      slide.addShape(shape.roundRect,{x:1.78,y:y+.02,w:2.15*d.score/100,h:.12,rectRadius:.05,fill:{color:C.orange},line:{color:C.orange}});
+      slide.addText(`${d.score}%`,{x:3.97,y:y-.02,w:.43,h:.18,fontFace:'Aptos',fontSize:7,bold:true,color:C.muted,align:'right',margin:0});
+    });
+    slide.addText('Mide campos diligenciados. No representa avance físico.',{x:.62,y:3.73,w:3.82,h:.23,fontFace:'Aptos',fontSize:7,italic:true,color:C.muted,margin:0});
+    addBlock(slide,'Estado actual',p.current,.62,4.15,3.05,1.0,C.blue);
+    addBlock(slide,'Compromiso',p.commitment,3.92,4.15,3.25,1.0,C.orange);
+    addBlock(slide,'Decisión requerida',p.decision,.62,5.4,3.05,.95,C.red);
+    addBlock(slide,'Riesgo o bloqueo',p.risk,3.92,5.4,3.25,.95,statusColor);
+    slide.addText(`${safe(p.intervention)}  ·  ${safe(p.phase)}\n${[p.department,p.municipalities,p.dependency].filter(hasData).join(' · ')||'Ubicación y dependencia pendientes'}`,{x:.62,y:6.57,w:6.55,h:.42,fontFace:'Aptos',fontSize:8,color:C.muted,margin:0,breakLine:false,fit:'shrink'});
+    slide.addShape(shape.rect,{x:.55,y:7.15,w:6.62,h:.02,fill:{color:'B9C3CD'},line:{color:'B9C3CD'}});
+    slide.addShape(shape.rect,{x:0,y:7.43,w:13.333,h:.07,fill:{color:C.orange},line:{color:C.orange}});
+    slide.addText('www.invias.gov.co',{x:.58,y:7.22,w:1.2,h:.14,fontFace:'Aptos',fontSize:5.5,color:C.muted,margin:0});
+    addBrand(slide);
+
+    const filename=`${p.projectId||'DTE'}_${p.name}`.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,90)+'.pptx';
+    await pptx.writeFile({fileName:filename});
+    showToast(`Presentación generada: ${filename}`);
+  }catch(err){console.error(err);showToast(`No se pudo generar el PowerPoint: ${err.message}`)}
+  finally{button.disabled=false;button.textContent='Exportar PowerPoint'}
+}
+
+let presentationIndex=0;
+function presentationProjects(){const filtered=filteredProjects();return filtered.length?filtered:projects}
+function presentationSlideCount(){return 3+presentationProjects().length}
+function presentationBrandFooter(label='Dirección Técnica y de Estructuración'){
+  return `<div class="ps-footer"><span>${esc(label)}</span><span>Instituto Nacional de Vías · INVÍAS</span></div><div class="ps-orange-line"></div>`;
+}
+function buildPresentationSlide(index){
+  const visible=presentationProjects();
+  if(index===0)return `<div class="ps-institutional-cover"><img class="ps-template-full" src="./assets/portada-institucional.png" alt="Portada institucional INVÍAS"><h2 class="ps-cover-title">Seguimiento actividades estratégicas DTE</h2></div>`;
+  if(index===1){
+    const active=visible.filter(p=>p.status==='En curso').length,attention=visible.filter(p=>['Bloqueado','Pendiente'].includes(p.status)).length,missing=visible.filter(p=>p.status==='Sin información').length;
+    const decisions=visible.filter(p=>hasData(p.decision));
+    return `<article class="ps-summary"><div class="ps-title">Estado del portafolio</div><div class="ps-subtitle">Resumen ejecutivo · corte al ${esc(visible[0]?.cutoff||'20 nov 2026')}</div><div class="ps-kpis"><div class="ps-kpi"><span>Actividades</span><strong>${visible.length}</strong></div><div class="ps-kpi"><span>En curso</span><strong>${active}</strong></div><div class="ps-kpi"><span>Requieren atención</span><strong>${attention}</strong></div><div class="ps-kpi"><span>Sin información</span><strong>${missing}</strong></div></div><div class="ps-summary-grid"><section class="ps-card"><h3>Actividades y estado</h3><div class="ps-portfolio-list">${visible.map(p=>`<div class="ps-portfolio-row"><b>${esc(p.name)}</b><span class="ps-pill ${slugStatus(p.status)}">${esc(p.status)}</span></div>`).join('')}</div></section><section class="ps-card"><h3>Decisiones prioritarias</h3>${decisions.length?decisions.slice(0,4).map(p=>`<div class="ps-decision"><b>${esc(p.name)}</b><br>${esc(p.decision)}</div>`).join(''):'<p>Sin decisiones registradas.</p>'}${decisions.length>4?`<p style="font-size:.65rem;color:#687386">${decisions.length-4} decisiones adicionales se presentan en las fichas de actividad.</p>`:''}</section></div>${presentationBrandFooter()}</article>`;
+  }
+  if(index===visible.length+2)return `<img class="ps-template-full" src="./assets/cierre-institucional.png" alt="Cierre institucional INVÍAS">`;
+  const p=visible[index-2],c=coverage(p),territorial=[p.department,p.municipalities,p.tramo].filter(hasData).join(' · ');
+  return `<article class="ps-project"><div class="ps-project-head"><div><h2>${esc(p.name)}</h2><p>${esc(p.projectId||'Actividad estratégica')} · ${esc(p.owner)}</p><span class="ps-pill ${slugStatus(p.status)}">${esc(p.status)}</span></div><div class="ps-score"><strong>${advanceText(p)}</strong><span>Avance reportado</span></div></div><div class="ps-project-grid"><section class="ps-project-card"><h3>Estado ejecutivo</h3><div class="ps-label">Fase actual</div><p>${esc(p.phase)}</p><div class="ps-label">Estado actual</div><p>${esc(p.current)}</p><div class="ps-label">Meta</div><p>${esc(p.goal)}</p><div class="ps-label">Ubicación / tramo</div><p>${esc(territorial||'Pendiente de diligenciar')}</p></section><section class="ps-project-card"><h3>Gestión y avance</h3><div class="ps-bars">${c.detail.map(d=>`<div class="ps-bar"><span>${esc(d.label)}</span><div class="ps-track"><div class="ps-fill" style="width:${d.score}%"></div></div><b>${d.score}%</b></div>`).join('')}</div><div class="ps-label" style="margin-top:9%">Compromiso</div><p class="ps-highlight">${esc(p.commitment||p.next)}</p><div class="ps-label">Responsable</div><p>${esc(p.owner)}</p></section><section class="ps-project-card"><h3>Alertas para decisión</h3><div class="ps-label">Riesgo o bloqueo</div><p class="ps-highlight ps-risk">${esc(p.risk)}</p><div class="ps-label">Decisión requerida</div><p>${hasData(p.decision)?esc(p.decision):'Sin decisión registrada'}</p><div class="ps-label">Cifra principal</div><p><b>${esc(p.quantity)}</b></p><div class="ps-label">Fuente</div><p>${esc(p.source||'Matriz de seguimiento DTE 2026')}</p></section></div>${presentationBrandFooter(`Actividad ${index-1} de ${visible.length}`)}</article>`;
+}
+function renderPresentation(){
+  const total=presentationSlideCount();presentationIndex=Math.max(0,Math.min(presentationIndex,total-1));
+  document.querySelector('#presentationSlide').innerHTML=buildPresentationSlide(presentationIndex);
+  document.querySelector('#presentationCounter').textContent=`${presentationIndex+1} / ${total}`;
+  document.querySelector('#presentationPrev').disabled=presentationIndex===0;
+  document.querySelector('#presentationNext').disabled=presentationIndex===total-1;
+}
+function openPresentation(){presentationIndex=0;const shell=document.querySelector('#presentationShell');shell.classList.add('open');shell.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';renderPresentation()}
+function closePresentation(){const shell=document.querySelector('#presentationShell');shell.classList.remove('open');shell.setAttribute('aria-hidden','true');document.body.style.overflow='';if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}
+async function capturePresentationSlides(){
+  if(!window.html2canvas)throw new Error('No fue posible cargar el capturador de diapositivas.');
+  const slide=document.querySelector('#presentationSlide');
+  const originalIndex=presentationIndex;
+  const originalStyle=slide.getAttribute('style')||'';
+  const images=[];
+  try{
+    slide.style.width='1280px';slide.style.height='720px';slide.style.maxWidth='none';slide.style.aspectRatio='auto';
+    if(document.fonts?.ready)await document.fonts.ready;
+    for(let i=0;i<presentationSlideCount();i++){
+      presentationIndex=i;renderPresentation();
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      const canvas=await html2canvas(slide,{backgroundColor:'#ffffff',scale:1,useCORS:true,allowTaint:false,logging:false,width:1280,height:720,windowWidth:1280,windowHeight:720});
+      images.push(canvas.toDataURL('image/png',1));
+    }
+  }finally{
+    presentationIndex=originalIndex;
+    slide.setAttribute('style',originalStyle);
+    renderPresentation();
+  }
+  return images;
+}
+async function exportPortfolioPpt(){
+  const btn=document.querySelector('#presentationExport');
+  if(!window.PptxGenJS){showToast('No fue posible cargar el generador de PowerPoint.');return}
+  btn.disabled=true;btn.textContent='Generando PowerPoint...';
+  try{
+    const images=await capturePresentationSlides();
+    const pptx=new PptxGenJS();pptx.layout='LAYOUT_WIDE';pptx.author='Dirección Técnica y de Estructuración - INVÍAS';pptx.company='Instituto Nacional de Vías';pptx.title='Seguimiento de proyectos estratégicos DTE';
+    images.forEach(data=>{const slide=pptx.addSlide();slide.addImage({data,x:0,y:0,w:13.333,h:7.5})});
+    await pptx.writeFile({fileName:'Seguimiento_Actividades_Estrategicas_DTE.pptx'});
+    showToast('PowerPoint generado con el mismo diseño del modo presentación.');
+  }catch(err){console.error(err);showToast(`No se pudo generar el PowerPoint: ${err.message}`)}finally{btn.disabled=false;btn.textContent='Exportar PowerPoint'}
+}
+async function exportPortfolioPdf(){
+  const btn=document.querySelector('#presentationExportPdf');
+  if(!window.jspdf?.jsPDF){showToast('No fue posible cargar el generador de PDF.');return}
+  btn.disabled=true;btn.textContent='Generando PDF...';
+  try{
+    const images=await capturePresentationSlides();
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'landscape',unit:'px',format:[1280,720],hotfixes:['px_scaling'],compress:true});
+    images.forEach((data,i)=>{if(i>0)pdf.addPage([1280,720],'landscape');pdf.addImage(data,'PNG',0,0,1280,720,undefined,'FAST')});
+    pdf.save('Seguimiento_Actividades_Estrategicas_DTE.pdf');
+    showToast('PDF generado con el mismo diseño del modo presentación.');
+  }catch(err){console.error(err);showToast(`No se pudo generar el PDF: ${err.message}`)}finally{btn.disabled=false;btn.textContent='Exportar PDF'}
+}
+
+function updateMetrics(){
+  document.querySelector('#totalMetric').textContent=projects.length;
+  document.querySelector('#activeMetric').textContent=projects.filter(p=>p.status==='En curso').length;
+  document.querySelector('#alertMetric').textContent=projects.filter(p=>['Bloqueado','Pendiente'].includes(p.status)).length;
+  document.querySelector('#missingMetric').textContent=projects.filter(p=>p.status==='Sin información').length;
+}
+
+function showToast(message){const t=document.querySelector('#toast');t.textContent=message;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+
+document.querySelector('#excelInput').addEventListener('change',async e=>{
+  const file=e.target.files[0];if(!file)return;
+  if(!window.XLSX){showToast('No fue posible cargar el lector de Excel.');return}
+  try{
+    const data=await file.arrayBuffer();const wb=XLSX.read(data,{type:'array'});const sheet=wb.Sheets[wb.SheetNames[0]];
+    const matrix=XLSX.utils.sheet_to_json(sheet,{header:1,defval:''});
+    const headerRow=Math.max(0,matrix.findIndex(row=>row.some(cell=>String(cell).trim()==='Actividad / proyecto')));
+    const rows=XLSX.utils.sheet_to_json(sheet,{range:headerRow,defval:''});
+    const commitmentsSheet=wb.Sheets['Compromisos'];
+    const commitments=commitmentsSheet?XLSX.utils.sheet_to_json(commitmentsSheet,{defval:''}):[];
+    const mapped=rows.filter(r=>r['Actividad / proyecto']||r['PROYECTO']).map((r,i)=>({
+      id:Number(r['N.º']||r.ID||i+1),name:r['Actividad / proyecto']||r.PROYECTO,owner:r['Responsable(s)']||r.RESPONSABLE||'Pendiente de confirmar',
+      status:r['Estado general']||r.ESTADO_NORMALIZADO||'Pendiente',phase:r['Fase actual']||r.FASE_ACTUAL||'Por confirmar',progress:(r['Avance reportado']===''||r['Avance reportado']===undefined||r['Avance reportado']===null)?null:Number(r['Avance reportado']),
+      current:r['Estado actual']||r.ESTADO_ACTUAL||'Sin estado registrado.',next:r['Próxima actividad']||r.PROXIMA_ACTIVIDAD||'Por definir',goal:r['Meta diciembre de 2026']||r.META||'Sin meta registrada.',
+      quantity:[r.CANTIDAD_META,r.UNIDAD].filter(Boolean).join(' ')||r['Información complementaria']||(r['Longitud (km)']?`${r['Longitud (km)']} km`:'Por definir'),risk:r['Alertas']||r.DESCRIPCION_BLOQUEO||r.OBSERVACIONES||'Sin bloqueo registrado.',
+      projectId:r.ID_PROYECTO||`DTE-${String(i+1).padStart(3,'0')}`,department:r.Departamento,municipalities:r.Municipios,tramo:r.Tramo,length:r['Longitud (km)'],intervention:r['Tipo de intervención'],routeStep:r['Paso de la ruta'],dependency:r['Dependencia responsable'],contracts:r['Contratos asociados'],value:r['Valor (millones $)'],physicalExec:(r['Avance físico ejecutado']===''||r['Avance físico ejecutado']==null)?'':Number(r['Avance físico ejecutado']),physicalPlan:(r['Avance físico programado']===''||r['Avance físico programado']==null)?'':Number(r['Avance físico programado']),financial:(r['Avance financiero']===''||r['Avance financiero']==null)?'':Number(r['Avance financiero']),studies:r['Estudios y diseños'],cutoff:r['Fecha de corte']||'',source:r['Fuente de la información'],decision:r['Decisión requerida'],review:r['Revisión de la información'],
+      commitment:(commitments.find(c=>c.ID_PROYECTO===r.ID_PROYECTO)||{})['Compromiso']||r['Próxima actividad']||'',commitmentStatus:(commitments.find(c=>c.ID_PROYECTO===r.ID_PROYECTO)||{})['Estado']||''
+    }));
+    if(!mapped.length)throw new Error('No se encontraron columnas reconocibles');
+    projects=mapped;selectedId=projects[0].id;updateMetrics();renderList();renderDetail();
+    document.querySelector('#cutoffLabel').textContent=`Archivo: ${file.name}`;showToast(`${projects.length} proyectos cargados correctamente.`);
+  }catch(err){showToast(`No se pudo leer el archivo: ${err.message}`)}
+});
+
+searchInput.addEventListener('input',renderList);statusFilter.addEventListener('change',renderList);
+document.querySelector('#presentationToggle').addEventListener('click',openPresentation);
+document.querySelector('#presentationPrev').addEventListener('click',()=>{presentationIndex--;renderPresentation()});
+document.querySelector('#presentationNext').addEventListener('click',()=>{presentationIndex++;renderPresentation()});
+document.querySelector('#presentationClose').addEventListener('click',closePresentation);
+document.querySelector('#presentationFullscreen').addEventListener('click',()=>document.querySelector('#presentationShell').requestFullscreen?.());
+document.querySelector('#presentationExport').addEventListener('click',exportPortfolioPpt);
+document.querySelector('#presentationExportPdf').addEventListener('click',exportPortfolioPdf);
+document.addEventListener('keydown',e=>{if(!document.querySelector('#presentationShell').classList.contains('open'))return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();if(presentationIndex<presentationSlideCount()-1){presentationIndex++;renderPresentation()}}else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();if(presentationIndex>0){presentationIndex--;renderPresentation()}}else if(e.key==='Escape'&&!document.fullscreenElement)closePresentation()});
+document.querySelector('#closeDetail').addEventListener('click',()=>document.querySelector('#detailPanel').classList.remove('open'));
+updateMetrics();renderList();renderDetail();
+
+</script>
+</body>
+</html>
