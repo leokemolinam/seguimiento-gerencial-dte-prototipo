@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Seguimiento gerencial DTE · Prototipo 4</title>
+  <title>Seguimiento gerencial DTE · Prototipo 5</title>
   <meta name="description" content="Tablero interactivo para consultar el avance de proyectos estratégicos DTE." />
   <style>
 :root{--ink:#111722;--muted:#767a81;--paper:#fff;--white:#fff;--orange:#ee8d1b;--red:#a52d30;--green:#347347;--blue:#355f88;--gray:#7a7e84;--line:#e9e9e9;--pale:#fff5e9;--soft:#fafafa}
@@ -50,7 +50,7 @@ input:focus,select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(23
 .detail-top{display:flex;justify-content:space-between;gap:18px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:22px}
 .status-large{display:inline-block;border:1px solid #f4d4ad;background:var(--pale);color:#9b611d;border-radius:20px;padding:6px 11px;font-size:.78rem;font-weight:700}
 .progress-ring{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--orange) calc(var(--p)*1%),#eee 0);position:relative;flex:0 0 auto}
-.progress-ring::after{content:"";position:absolute;inset:11px;background:#fff;border-radius:50%}.progress-ring strong{position:relative;z-index:1;font-size:1.22rem;font-weight:650}
+.progress-ring::after{content:"";position:absolute;inset:11px;background:#fff;border-radius:50%}.progress-ring strong{position:relative;z-index:1;font-size:1.22rem;font-weight:650}.advance-block{display:grid;justify-items:center;gap:7px;flex:0 0 auto}.advance-block>span{font-size:.7rem;color:var(--muted);font-weight:700;text-align:center}
 .detail-section{padding:19px 0;border-bottom:1px solid var(--line)}
 .detail-section span{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:#b36d18;font-weight:700;margin-bottom:8px}
 .detail-section p{margin:0;line-height:1.55;color:#555b65}
@@ -73,7 +73,7 @@ body.presentation{background:#fffaf5}body.presentation .topbar{position:relative
 .ps-template-full{display:block;width:100%;height:100%;object-fit:cover}
 .ps-institutional-cover{position:relative;width:100%;height:100%}.ps-cover-title{position:absolute;left:7.5%;top:41%;width:34%;margin:0;color:#0b315d;font-size:clamp(1.25rem,2.45vw,2.7rem);line-height:1.08;letter-spacing:-.025em;font-weight:750;text-transform:uppercase}
 
-/* Prototipo 4: tipografía optimizada para lectura en pantalla y exportación 16:9 */
+/* Prototipo 5: tipografía optimizada para lectura en pantalla y exportación 16:9 */
 .ps-brand-text{font-size:clamp(.74rem,.88vw,.94rem)}
 .ps-footer{font-size:clamp(.68rem,.78vw,.8rem);padding-top:10px}
 .ps-cover-title{font-size:clamp(1.8rem,3vw,3.35rem);line-height:1.06;width:38%}
@@ -110,11 +110,11 @@ body.presentation{background:#fffaf5}body.presentation .topbar{position:relative
   <header class="topbar">
     <div class="brand-mark">DTE</div>
     <div>
-      <p class="eyebrow">Dirección Técnica y de Estructuración · Prototipo 4</p>
+      <p class="eyebrow">Dirección Técnica y de Estructuración · Prototipo 5</p>
       <h1>Seguimiento de proyectos estratégicos</h1>
     </div>
     <div class="header-actions">
-      <span id="cutoffLabel" class="cutoff">Corte: 20 nov 2026 · Información precargada</span>
+      <span id="cutoffLabel" class="cutoff">Sin datos precargados · Cargue el Excel</span>
       <label class="upload-btn" for="excelInput">Cargar Excel</label>
       <input id="excelInput" type="file" accept=".xlsx,.xls,.csv" hidden />
     </div>
@@ -198,516 +198,13 @@ body.presentation{background:#fffaf5}body.presentation .topbar{position:relative
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
   <script>
-const initialProjects = [
-  {
-    "id": 1,
-    "name": "Estructuración rehabilitación",
-    "owner": "Carlos Hernán García",
-    "status": "En curso",
-    "phase": "Estudios previos",
-    "progress": 0,
-    "current": "1. En proceso de elaboracion de estudios previso y anexos tecnicos para enviar a procesos contractual.",
-    "next": "Finalizar los estudios previos y anexos técnicos y remitirlos al proceso contractual.",
-    "goal": "Adelantar el proceso de contratacion",
-    "quantity": "5.200 km",
-    "risk": "Sin bloqueo explícito.",
-    "projectId": "DTE-001",
-    "agreement": "",
-    "department": "",
-    "municipalities": "",
-    "tramo": "",
-    "length": 5200,
-    "intervention": "Rehabilitación",
-    "routeStep": "",
-    "dependency": "Dirección Técnica y de Estructuración",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "Estudios previos y anexos técnicos en elaboración",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "",
-    "review": "Pendiente",
-    "complementary": "5.200 km; subred/malla nacional",
-    "commitment": "Finalizar los estudios previos y anexos técnicos y remitirlos al proceso contractual.",
-    "commitmentStatus": "En curso"
-  },
-  {
-    "id": 2,
-    "name": "Estructuración variantes",
-    "owner": "Carlos Hernán García",
-    "status": "Pendiente",
-    "phase": "Estudios previos",
-    "progress": 0,
-    "current": "1. Pendiente la entrega de memorando por parte Smodernización, a la SEP. 2.Elaboracion de los estudios previos, y anexo tecnico.",
-    "next": "Recibir el memorando pendiente y completar los documentos técnicos.",
-    "goal": "Adelantar el proceso de contratacion",
-    "quantity": "Por definir",
-    "risk": "Dependencia de entrega del memorando.",
-    "projectId": "DTE-002",
-    "agreement": "",
-    "department": "",
-    "municipalities": "",
-    "tramo": "",
-    "length": "",
-    "intervention": "Variantes",
-    "routeStep": "",
-    "dependency": "Dirección Técnica y de Estructuración",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "Estudios previos y anexo técnico en elaboración",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Recibir el memorando pendiente y completar los documentos técnicos.",
-    "commitmentStatus": "Programado"
-  },
-  {
-    "id": 3,
-    "name": "Caminos del Tigre",
-    "owner": "Renata -Gladys- Guillermo",
-    "status": "En curso",
-    "phase": "Por desagregar",
-    "progress": 0,
-    "current": "1. Programa en proceso de estructuración.\n2. Se esta definiendo el modelo de operación y se creo formulario para recopilacion de información.\n3. Elaboración metodologia para priorizar corredores.\n4. Se estan revisando las BD de estudios y diseños del Invias y Entes territoriales.",
-    "next": "Validar el alcance y desagregar Caminos del Tigre en proyectos y compromisos.",
-    "goal": "Lanzar el Programa con el Vbo. de la Ministra de Transporte.",
-    "quantity": "1 programa",
-    "risk": "La matriz original indica que la SRT no tiene temas vinculados; la propuesta detallada contiene proyectos activos.",
-    "projectId": "DTE-003",
-    "agreement": "",
-    "department": "Norte de Santander",
-    "municipalities": "Tibú, Sardinata y El Zulia",
-    "tramo": "Troncal del Catatumbo",
-    "length": "",
-    "intervention": "Mejoramiento",
-    "routeStep": "Ruta por desagregar",
-    "dependency": "Subdirección de Vías Regionales / DTE",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "La propuesta detallada contiene varios convenios y tramos; debe desagregarse.",
-    "cutoff": "20 nov 2026",
-    "source": "Caminos_del_Tigre_Datos_Tablero.xlsx",
-    "decision": "Definir si se incorpora el detalle de los tres proyectos de Caminos del Tigre.",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Validar el alcance y desagregar Caminos del Tigre en proyectos y compromisos.",
-    "commitmentStatus": "En curso"
-  },
-  {
-    "id": 4,
-    "name": "CONPES – Proyecto Vias Patria Milagro",
-    "owner": "Dagoberto Cabrales-Andres Marcelo",
-    "status": "En curso",
-    "phase": "Estructuración",
-    "progress": 0,
-    "current": "1. Estudios Y Diseños De Conexiones Del Cruce Cordillera Central Con Troncal Del Café Y Vías Nacionales Y Regionales Del Quindío, Valle Y Risaralda.\n\n Se Realizó Conformación Preliminar De Insumo Técnicos Para Estructuración, Es Espera Definición De Corredores Y/O Conexiones Definitivas Para Maduración Del Proyecto.\n\n2.         Estudios Y Diseños Para La Interconexión De La Orinoquía Con El Altiplano Boyacense Y El Magdalena Medio",
-    "next": "Precisar actividades, entregables y fechas del proceso.",
-    "goal": "Publicarlos en SECOP a nivel de borrador",
-    "quantity": "Por definir",
-    "risk": "Información operativa insuficiente.",
-    "projectId": "DTE-004",
-    "agreement": "",
-    "department": "Cauca",
-    "municipalities": "",
-    "tramo": "",
-    "length": "",
-    "intervention": "Proyecto vial / CONPES",
-    "routeStep": "Estructuración",
-    "dependency": "Dirección Técnica y de Estructuración",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "Estan en elaboración los estudios y diseños",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "Definir alcance, entregables y cronograma.",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Precisar actividades, entregables y fechas del proceso.",
-    "commitmentStatus": "En curso"
-  },
-  {
-    "id": 5,
-    "name": "Contrato de Consultoria",
-    "owner": "Daniel Arturo Alvarez; Luis Carlos Mantilla Pérez",
-    "status": "En curso",
-    "phase": "Estructuración y revisión",
-    "progress": 0,
-    "current": "1. En tramite de estructuración.\n2.Se remitio el anexo tecnico por parte de la SPI a la gerencia de peajes el 18 de noviembre para revisión. En paralelo se mantiene mesas de trabajo con la SEP para conocimiento del proceso.",
-    "next": "Revisar el anexo técnico y consolidar la estructuración.",
-    "goal": "Proceso estructurado para inicio de tramite  SCPC. En el primer trimestre 2027",
-    "quantity": "1 proceso",
-    "risk": "Depende de la revisión entre dependencias.",
-    "projectId": "DTE-005",
-    "agreement": "",
-    "department": "",
-    "municipalities": "",
-    "tramo": "",
-    "length": "",
-    "intervention": "Consultoría",
-    "routeStep": "Estructuración",
-    "dependency": "Gerencia de Peajes / SPI / SEP",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "Anexo técnico remitido a la Gerencia de Peajes",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Revisar el anexo técnico y consolidar la estructuración.",
-    "commitmentStatus": "En curso"
-  },
-  {
-    "id": 6,
-    "name": "Proyecto pliego peajes",
-    "owner": "Luis Carlos Mantilla Pérez",
-    "status": "En curso",
-    "phase": "Revisión",
-    "progress": 0,
-    "current": "1. Enviados anexos tecnicos y documentos del proceso a la SEP el 13 de Noviembre de 2026.\n2. Revisión de los anexos tecnicos con las observaciones de la SEP el 12 y 18 de noviembre.",
-    "next": "Atender las observaciones y preparar la apertura del proceso.",
-    "goal": "Apertura del proceso por parte de la SPSC en la primera semana de diciembre.",
-    "quantity": "1 proceso",
-    "risk": "Cumplimiento sujeto al cierre de observaciones.",
-    "projectId": "DTE-006",
-    "agreement": "",
-    "department": "",
-    "municipalities": "",
-    "tramo": "",
-    "length": "",
-    "intervention": "Proceso contractual",
-    "routeStep": "Revisión",
-    "dependency": "Gerencia de Peajes / SEP / SPSC",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "Anexos técnicos y documentos del proceso remitidos",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Atender las observaciones y preparar la apertura del proceso.",
-    "commitmentStatus": "En curso"
-  },
-  {
-    "id": 7,
-    "name": "Dragado Buenaventura",
-    "owner": "Dagoberto Cabrales",
-    "status": "Bloqueado",
-    "phase": "Licenciamiento y consulta previa",
-    "progress": 0,
-    "current": "1. Se esta realizando un estudio de impacto ambiental para la modificación de la licencia.\n2. Ruta metodologica establecida con los consejos comunitarios de la consulta previa se encuentra suspendida.\n3. Rosa solis, no retoma la ruta metodologica hasta no tener mesa de trabajo con ANLA e Invias.",
-    "next": "Realizar mesa de trabajo con ANLA e INVÍAS.",
-    "goal": "1. Reactivar la consulta previa \n2. Realizar los pre-talleres y talleres de impacto.\nSujeto a la reactivación del dialogo con las comunidades.",
-    "quantity": "Por definir",
-    "risk": "Consulta previa suspendida.",
-    "projectId": "DTE-007",
-    "agreement": "",
-    "department": "Valle del Cauca",
-    "municipalities": "Buenaventura",
-    "tramo": "",
-    "length": "",
-    "intervention": "Dragado / licenciamiento",
-    "routeStep": "Licenciamiento ambiental",
-    "dependency": "Dependencia por confirmar",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "Estudio de impacto ambiental y consulta previa",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "Definir ruta para reactivar la consulta previa.",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Realizar mesa de trabajo con ANLA e INVÍAS.",
-    "commitmentStatus": "Bloqueado"
-  },
-  {
-    "id": 8,
-    "name": "Deconstrucción puente Laureano Gómez",
-    "owner": "Carlos Hernán García",
-    "status": "En curso",
-    "phase": "Estructuración",
-    "progress": 0,
-    "current": "1. Elaboracion de estudio previo y anexo tecnico. 2. Revisión del convenio.",
-    "next": "Terminar los documentos y la revisión del convenio.",
-    "goal": "Suscribir el convenio",
-    "quantity": "1 convenio",
-    "risk": "Sin bloqueo explícito.",
-    "projectId": "DTE-008",
-    "agreement": "",
-    "department": "Atlántico",
-    "municipalities": "Barranquilla",
-    "tramo": "",
-    "length": "",
-    "intervention": "Deconstrucción de puente",
-    "routeStep": "Estructuración",
-    "dependency": "Dirección Técnica y de Estructuración",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "Estudio previo, anexo técnico y convenio en revisión",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Terminar los documentos y la revisión del convenio.",
-    "commitmentStatus": "En curso"
-  },
-  {
-    "id": 9,
-    "name": "Frente Chocó terremoto",
-    "owner": "Luis Carlos Mantilla Pérez; Dagoberto Cabrales",
-    "status": "Pendiente",
-    "phase": "Operación",
-    "progress": 0,
-    "current": "20 km; plazo aproximado de 30 meses",
-    "next": "Reportar cantidad ejecutada, fecha de inicio y cronograma.",
-    "goal": "Entregar 20 km / Dirección operativa",
-    "quantity": "20 km",
-    "risk": "No informa avance ejecutado.",
-    "projectId": "DTE-009",
-    "agreement": "",
-    "department": "Chocó",
-    "municipalities": "",
-    "tramo": "",
-    "length": 20,
-    "intervention": "Atención de emergencia",
-    "routeStep": "Operación",
-    "dependency": "Dependencia por confirmar",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "Definir inicio y programación de la intervención.",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Reportar cantidad ejecutada, fecha de inicio y cronograma.",
-    "commitmentStatus": "Programado"
-  },
-  {
-    "id": 10,
-    "name": "Proyecto Altillanura",
-    "owner": "Juan Ernesto Vélez",
-    "status": "Sin información",
-    "phase": "Por confirmar",
-    "progress": 0,
-    "current": "El proyecto altillanura esta comprendido por 3 tramos los cuales son:\n1. Puerto Gaitan - Pte Arimena: Se encuentra los estudios y diseños en el 83% y pavimentación 4,6 km.\n2. Puente Arimena - El Viento:  Se encuentran los estudios y Diseños del 71% y pavimentación 10,9% km.\n3. Puente Juriepe - Pto Carreño:  Se encuentran los estudios y Diseños del 100% y pavimentación 8% km .",
-    "next": "Diligenciar estado, alcance, próxima actividad y meta.",
-    "goal": "Tener pavimentados los siguientes km por tramo.\n1. Puerto Gaitan - Pte Arimena: 20 Km\n2. Puente Arimena - El Viento:  26km\n3. Puente Juriepe - Pto Carreño: 33 km",
-    "quantity": "Por definir",
-    "risk": "Pto Gaitán – Pte Arimena: \n* Demoras en los pagos: el contratista redujo personal e insumos.\n*Sin recursos para la compensación ambiental exigida.\n*Bloqueos frecuentes y presupuesto social 2026 en $0.\n*La comunidad indígena exige a la ANT legalizar tierras.\nPte Arimena – El Viento:\n*Panfletos anuncian paro armado en diciembre y restricción nocturna.\n*Bloqueos por el estado de la vía en invierno; INVÍAS se comprometió a reintegrar recursos a la obra.\n*Tala del permiso forestal de Cormacarena con plazo al 10/10/2026; afecta el terraplén.\nPte Juriepe – Pto Carreño\n*Grafitis y panfleto de paro armado, con acompañamiento del GAULA.\n*Carga mayor a 3,5 t restringida en el Puente Juriepe (Res. 02379/2025); desvío por la “Y” del K8+700.\n*Cuatro predios baldíos dependen de la adjudicación de la ANT.",
-    "projectId": "DTE-010",
-    "agreement": "",
-    "department": "Meta / Vichada",
-    "municipalities": "",
-    "tramo": "",
-    "length": "El proyecto altillanura esta comprendido por 3 tramos los cuales son:\n1. Puerto Gaitan - Pte Arimena: 68 Km\n2. Puente Arimena - El Viento:  58,3 Km\n3. Puente Juriepe - Pto Carreño:96 Km",
-    "intervention": "Proyecto vial",
-    "routeStep": "Por confirmar",
-    "dependency": "Dependencia por confirmar",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "El proyecto altillanura esta comprendido por 3 tramos los cuales son:\n1. Puerto Gaitan - Pte Arimena: Se encuentra los estudios y diseños en el 83%\n2. Puente Arimena - El Viento:  Se encuentran los estudios y Diseños del 71%\n3. Puente Juriepe - Pto Carreño:  Se encuentran los estudios y Diseños del 100%",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "Confirmar alcance y responsable operativo.",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Diligenciar estado, alcance, próxima actividad y meta.",
-    "commitmentStatus": "Programado"
-  },
-  {
-    "id": 11,
-    "name": "Colombia – La Uribe",
-    "owner": "Dagoberto Cabrales- andres marcelo-(SGIC)",
-    "status": "Pendiente",
-    "phase": "Solicitud y trámite",
-    "progress": 0,
-    "current": "Sobre poniendo la diferente información disponibles de proyectos y/o estudios y diseños de la zona para identificar los tramos en los cuales se requiere hacer algun tipo de intervencion a Nivel de estudios y diseños.",
-    "next": "Enviar la nueva solicitud.",
-    "goal": "Dar incio a los tramos faltantes (Si llegaran a exisitir sobre el corredor de Interes)",
-    "quantity": "Por definir",
-    "risk": "Solicitud pendiente.",
-    "projectId": "DTE-011",
-    "agreement": "",
-    "department": "Meta- Huila",
-    "municipalities": "Uribe- Colombia",
-    "tramo": "",
-    "length": "",
-    "intervention": "Proyecto vial",
-    "routeStep": "Solicitud y trámite",
-    "dependency": "Dependencia por confirmar",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Enviar la nueva solicitud.",
-    "commitmentStatus": "Programado"
-  },
-  {
-    "id": 12,
-    "name": "Bogotá–Villavicencio",
-    "owner": "Jhoen Antulio Valero Rojas",
-    "status": "Pendiente",
-    "phase": "Mantenimiento",
-    "progress": 0,
-    "current": "*K58\nContrato terminado el 28-02-2025, actualmente en liquidacion en sede judicial contratista demanda al Invias por el orden 52 mil millones de pesos.\n\n*Variante Caqueza (Ruta 40CNV Atencion punto critico 37+500)\nEl proceso para la contratacion de estudios y diseños fue suspendido en la SEP por que se liberaron los recursos nacion los cuales fueron bloqueados por Minhacienda.\n\n* Contrato 7717 2024 Finalizado el 30-09-2026. Ejecutado por la DEO, el cual atendio puntos criticos de la via al llano incluyendo el punto critico Estaqueca. PR46+150.",
-    "next": "Definir responsable, alcance y próxima actividad.",
-    "goal": "La Entidad debe volver  a realizar las gestiones que permitan la consecucion de los recursos y SEP reactive los procesos de contratacion para la consultoria que permita los EYD para los puntos criticos de la Via",
-    "quantity": "$52.000 millones",
-    "risk": "Registro incompleto.",
-    "projectId": "DTE-012",
-    "agreement": "",
-    "department": "Cundinamarca / Meta",
-    "municipalities": "Bogotá / Villavicencio",
-    "tramo": "",
-    "length": "",
-    "intervention": "Mantenimiento",
-    "routeStep": "Mantenimiento",
-    "dependency": "Dependencia por confirmar",
-    "contracts": "",
-    "value": 52000,
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "Confirmar alcance y responsable.",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Definir responsable, alcance y próxima actividad.",
-    "commitmentStatus": "Programado"
-  },
-  {
-    "id": 13,
-    "name": "Puentes metálicos",
-    "owner": "Jhoen Antulio Valero Rojas",
-    "status": "En curso",
-    "phase": "Identificación y gestión",
-    "progress": 0,
-    "current": "1. Rastreo completo por parte de la Territoriales desde la SGR para obtener la ubicación.\n2. Dirigir el recurso a los contratistas que influyen en las zonas donde se ubican los puentes.",
-    "next": "Dirigir recursos a los contratistas de las zonas identificadas.",
-    "goal": "10 puentes",
-    "quantity": "10 puentes; 12 en verificación",
-    "risk": "Comodatos vencidos y ubicación por verificar.",
-    "projectId": "DTE-013",
-    "agreement": "",
-    "department": "Huila",
-    "municipalities": "",
-    "tramo": "",
-    "length": "",
-    "intervention": "Puentes modulares",
-    "routeStep": "Identificación y gestión",
-    "dependency": "SGR / Direcciones territoriales",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "Rastreo territorial y verificación de comodatos",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "Definir recursos y priorización de los 10 puentes.",
-    "review": "Pendiente",
-    "complementary": "Hace 4 años se vencieron unos comodatos de puentes modulares en el huila y se estan verificando 12 puentes con referente al comodato vencidos para revisar cuales pueden ser utilizados.",
-    "commitment": "Dirigir recursos a los contratistas de las zonas identificadas.",
-    "commitmentStatus": "En curso"
-  },
-  {
-    "id": 14,
-    "name": "Memorando ANLA- Colombia – La Uribe (2022)",
-    "owner": "Jairo Arguello",
-    "status": "Sin información",
-    "phase": "Por confirmar",
-    "progress": 0,
-    "current": "Archivada la solicitud por la ANLA se presento recurso de reposición y la ANLA ratifico la decisión de primera instancia.",
-    "next": "Diligenciar responsable, estado, alcance y meta.",
-    "goal": "No aplica meta debido que fue confirmado archivo por parte del ANLA",
-    "quantity": "Por definir",
-    "risk": "Información faltante.",
-    "projectId": "DTE-014",
-    "agreement": "",
-    "department": "",
-    "municipalities": "",
-    "tramo": "",
-    "length": "",
-    "intervention": "Gestión ambiental",
-    "routeStep": "Iniciar proceso",
-    "dependency": "SS/ Jairo Arguello",
-    "contracts": "",
-    "value": "",
-    "physicalExec": "",
-    "physicalPlan": "",
-    "variance": "",
-    "financial": "",
-    "studies": "",
-    "cutoff": "20 nov 2026",
-    "source": "Matriz de seguimiento DTE 2026",
-    "decision": "Confirmar el objeto y trámite del memorando.",
-    "review": "Pendiente",
-    "complementary": "",
-    "commitment": "Diligenciar responsable, estado, alcance y meta.",
-    "commitmentStatus": "Programado"
-  }
-];
+const initialProjects = [];
 
 const enrichedData = {};
 
 function hasData(value){return value!==undefined&&value!==null&&String(value).trim()!==''&&!/por (definir|confirmar)|sin informaci[oó]n|no aplica/i.test(String(value))}
+function reportedAdvance(p){const v=p.progress;return v===null||v===undefined||v===''||Number.isNaN(Number(v))?null:Math.max(0,Math.min(100,Number(v)))}
+function advanceText(p){const v=reportedAdvance(p);return v===null?'—':`${Math.round(v)}%`}
 function coverage(p){
   const groups={
     'Identificación':[p.projectId,p.intervention,p.dependency],
@@ -720,7 +217,7 @@ function coverage(p){
 }
 
 let projects = initialProjects.map(p=>({...p}));
-let selectedId = 7;
+let selectedId = null;
 const list = document.querySelector('#projectList');
 const detailContent = document.querySelector('#detailContent');
 const searchInput = document.querySelector('#searchInput');
@@ -743,8 +240,8 @@ function renderList(){
     <span class="project-name">${esc(p.name)}</span>
     <span class="owner">${esc(p.owner)}</span>
     <span class="status ${slugStatus(p.status)}">${esc(p.status)}</span>
-    <span class="progress" title="Cobertura de información">${coverage(p).total}%</span>
-  </article>`).join('') || '<p>No hay proyectos que coincidan con los filtros.</p>';
+    <span class="progress" title="Avance reportado">${advanceText(p)}</span>
+  </article>`).join('') || '<p>No hay datos cargados. Use el botón Cargar Excel para iniciar.</p>';
   list.querySelectorAll('.project-row').forEach(row=>{
     const open=()=>selectProject(Number(row.dataset.id));
     row.addEventListener('click',open);row.addEventListener('keydown',e=>{if(e.key==='Enter')open()});
@@ -758,10 +255,10 @@ function renderDetail(){
   const value=(v,fallback='Pendiente de diligenciar')=>hasData(v)?esc(v):`<span class="empty-value">${fallback}</span>`;
   const territorial=[p.department,p.municipalities,p.tramo].filter(hasData).join(' · ');
   const quantitative=[p.physicalExec,p.physicalPlan,p.financial].some(hasData);
-  const quantitativeChart=quantitative?`<div class="coverage-card"><div class="coverage-head"><h3>Avance reportado</h3></div>${[['Físico ejecutado',p.physicalExec],['Físico programado',p.physicalPlan],['Financiero',p.financial]].map(([label,v])=>`<div class="coverage-row"><span>${label}</span><div class="coverage-track"><div class="coverage-fill" style="width:${Number(v)||0}%"></div></div><b>${Number(v)||0}%</b></div>`).join('')}</div>`:'';
+  const quantitativeChart=quantitative?`<div class="coverage-card"><div class="coverage-head"><h3>Indicadores físico y financiero</h3></div>${[['Físico ejecutado',p.physicalExec],['Físico programado',p.physicalPlan],['Financiero',p.financial]].map(([label,v])=>`<div class="coverage-row"><span>${label}</span><div class="coverage-track"><div class="coverage-fill" style="width:${Number(v)||0}%"></div></div><b>${Number(v)||0}%</b></div>`).join('')}</div>`:'';
   detailContent.innerHTML=`<p class="eyebrow red-text">Ficha del proyecto</p>
   <div class="detail-top"><div><h2>${esc(p.name)}</h2><p class="owner-line">${esc(p.owner)}</p><span class="status-large">${esc(p.status)}</span><br><button id="exportPptBtn" class="ppt-btn" type="button">Exportar PowerPoint</button></div>
-  <div class="progress-ring" style="--p:${c.total}" title="Cobertura de información"><strong>${c.total}%</strong></div></div>
+  <div class="advance-block"><div class="progress-ring" style="--p:${reportedAdvance(p)??0}" title="Avance reportado"><strong>${advanceText(p)}</strong></div><span>Avance reportado</span></div></div>
   <div class="meta-strip"><div class="meta-card"><span>ID</span><strong>${value(p.projectId)}</strong></div><div class="meta-card"><span>Corte</span><strong>${value(p.cutoff)}</strong></div><div class="meta-card"><span>Validación</span><strong>${value(p.review)}</strong></div></div>
   <div class="coverage-card"><div class="coverage-head"><div><p class="eyebrow">Calidad del reporte</p><h3>Cobertura de información</h3></div><strong>${c.total}%</strong></div>${c.detail.map(x=>`<div class="coverage-row"><span>${x.label}</span><div class="coverage-track"><div class="coverage-fill" style="width:${x.score}%"></div></div><b>${x.score}%</b></div>`).join('')}<p class="coverage-note">Este indicador mide campos diligenciados; no representa avance físico del proyecto.</p></div>
   ${quantitativeChart}
@@ -843,8 +340,8 @@ async function exportProjectPpt(p){
     slide.addText(p.name,{x:.58,y:.55,w:6.55,h:.55,fontFace:'Aptos Display',fontSize:23,bold:false,color:C.blue,margin:0,fit:'shrink'});
     slide.addText(`${p.projectId||''}  ${p.status}`.trim(),{x:.6,y:1.18,w:3.5,h:.24,fontFace:'Aptos',fontSize:9,bold:true,color:statusColor,margin:0});
     const cov=coverage(p);
-    slide.addText('Cobertura de información',{x:.6,y:1.65,w:3.3,h:.27,fontFace:'Aptos',fontSize:13,bold:true,color:C.ink,margin:0});
-    slide.addText(`${cov.total}%`,{x:3.72,y:1.58,w:.72,h:.35,fontFace:'Aptos Display',fontSize:18,bold:true,color:C.orange,align:'right',margin:0});
+    slide.addText('Avance reportado',{x:.6,y:1.65,w:3.3,h:.27,fontFace:'Aptos',fontSize:13,bold:true,color:C.ink,margin:0});
+    slide.addText(advanceText(p),{x:3.72,y:1.58,w:.72,h:.35,fontFace:'Aptos Display',fontSize:18,bold:true,color:C.orange,align:'right',margin:0});
     cov.detail.forEach((d,i)=>{
       const y=2.08+i*.4;
       slide.addText(d.label,{x:.62,y,w:1.18,h:.18,fontFace:'Aptos',fontSize:8,color:C.muted,margin:0});
@@ -886,7 +383,7 @@ function buildPresentationSlide(index){
   }
   if(index===visible.length+2)return `<img class="ps-template-full" src="./assets/cierre-institucional.png" alt="Cierre institucional INVÍAS">`;
   const p=visible[index-2],c=coverage(p),territorial=[p.department,p.municipalities,p.tramo].filter(hasData).join(' · ');
-  return `<article class="ps-project"><div class="ps-project-head"><div><h2>${esc(p.name)}</h2><p>${esc(p.projectId||'Actividad estratégica')} · ${esc(p.owner)}</p><span class="ps-pill ${slugStatus(p.status)}">${esc(p.status)}</span></div><div class="ps-score"><strong>${c.total}%</strong><span>Cobertura de información</span></div></div><div class="ps-project-grid"><section class="ps-project-card"><h3>Estado ejecutivo</h3><div class="ps-label">Fase actual</div><p>${esc(p.phase)}</p><div class="ps-label">Estado actual</div><p>${esc(p.current)}</p><div class="ps-label">Meta</div><p>${esc(p.goal)}</p><div class="ps-label">Ubicación / tramo</div><p>${esc(territorial||'Pendiente de diligenciar')}</p></section><section class="ps-project-card"><h3>Gestión y avance</h3><div class="ps-bars">${c.detail.map(d=>`<div class="ps-bar"><span>${esc(d.label)}</span><div class="ps-track"><div class="ps-fill" style="width:${d.score}%"></div></div><b>${d.score}%</b></div>`).join('')}</div><div class="ps-label" style="margin-top:9%">Compromiso</div><p class="ps-highlight">${esc(p.commitment||p.next)}</p><div class="ps-label">Responsable</div><p>${esc(p.owner)}</p></section><section class="ps-project-card"><h3>Alertas para decisión</h3><div class="ps-label">Riesgo o bloqueo</div><p class="ps-highlight ps-risk">${esc(p.risk)}</p><div class="ps-label">Decisión requerida</div><p>${hasData(p.decision)?esc(p.decision):'Sin decisión registrada'}</p><div class="ps-label">Cifra principal</div><p><b>${esc(p.quantity)}</b></p><div class="ps-label">Fuente</div><p>${esc(p.source||'Matriz de seguimiento DTE 2026')}</p></section></div>${presentationBrandFooter(`Actividad ${index-1} de ${visible.length}`)}</article>`;
+  return `<article class="ps-project"><div class="ps-project-head"><div><h2>${esc(p.name)}</h2><p>${esc(p.projectId||'Actividad estratégica')} · ${esc(p.owner)}</p><span class="ps-pill ${slugStatus(p.status)}">${esc(p.status)}</span></div><div class="ps-score"><strong>${advanceText(p)}</strong><span>Avance reportado</span></div></div><div class="ps-project-grid"><section class="ps-project-card"><h3>Estado ejecutivo</h3><div class="ps-label">Fase actual</div><p>${esc(p.phase)}</p><div class="ps-label">Estado actual</div><p>${esc(p.current)}</p><div class="ps-label">Meta</div><p>${esc(p.goal)}</p><div class="ps-label">Ubicación / tramo</div><p>${esc(territorial||'Pendiente de diligenciar')}</p></section><section class="ps-project-card"><h3>Gestión y avance</h3><div class="ps-bars">${c.detail.map(d=>`<div class="ps-bar"><span>${esc(d.label)}</span><div class="ps-track"><div class="ps-fill" style="width:${d.score}%"></div></div><b>${d.score}%</b></div>`).join('')}</div><div class="ps-label" style="margin-top:9%">Compromiso</div><p class="ps-highlight">${esc(p.commitment||p.next)}</p><div class="ps-label">Responsable</div><p>${esc(p.owner)}</p></section><section class="ps-project-card"><h3>Alertas para decisión</h3><div class="ps-label">Riesgo o bloqueo</div><p class="ps-highlight ps-risk">${esc(p.risk)}</p><div class="ps-label">Decisión requerida</div><p>${hasData(p.decision)?esc(p.decision):'Sin decisión registrada'}</p><div class="ps-label">Cifra principal</div><p><b>${esc(p.quantity)}</b></p><div class="ps-label">Fuente</div><p>${esc(p.source||'Matriz de seguimiento DTE 2026')}</p></section></div>${presentationBrandFooter(`Actividad ${index-1} de ${visible.length}`)}</article>`;
 }
 function renderPresentation(){
   const total=presentationSlideCount();presentationIndex=Math.max(0,Math.min(presentationIndex,total-1));
@@ -966,7 +463,7 @@ document.querySelector('#excelInput').addEventListener('change',async e=>{
     const commitments=commitmentsSheet?XLSX.utils.sheet_to_json(commitmentsSheet,{defval:''}):[];
     const mapped=rows.filter(r=>r['Actividad / proyecto']||r['PROYECTO']).map((r,i)=>({
       id:Number(r['N.º']||r.ID||i+1),name:r['Actividad / proyecto']||r.PROYECTO,owner:r['Responsable(s)']||r.RESPONSABLE||'Pendiente de confirmar',
-      status:r['Estado general']||r.ESTADO_NORMALIZADO||'Pendiente',phase:r['Fase actual']||r.FASE_ACTUAL||'Por confirmar',progress:Number(r.AVANCE_PCT||0),
+      status:r['Estado general']||r.ESTADO_NORMALIZADO||'Pendiente',phase:r['Fase actual']||r.FASE_ACTUAL||'Por confirmar',progress:(r['Avance reportado']===''||r['Avance reportado']===undefined||r['Avance reportado']===null)?null:Number(r['Avance reportado']),
       current:r['Estado actual']||r.ESTADO_ACTUAL||'Sin estado registrado.',next:r['Próxima actividad']||r.PROXIMA_ACTIVIDAD||'Por definir',goal:r['Meta diciembre de 2026']||r.META||'Sin meta registrada.',
       quantity:[r.CANTIDAD_META,r.UNIDAD].filter(Boolean).join(' ')||r['Información complementaria']||(r['Longitud (km)']?`${r['Longitud (km)']} km`:'Por definir'),risk:r['Alertas']||r.DESCRIPCION_BLOQUEO||r.OBSERVACIONES||'Sin bloqueo registrado.',
       projectId:r.ID_PROYECTO||`DTE-${String(i+1).padStart(3,'0')}`,department:r.Departamento,municipalities:r.Municipios,tramo:r.Tramo,length:r['Longitud (km)'],intervention:r['Tipo de intervención'],routeStep:r['Paso de la ruta'],dependency:r['Dependencia responsable'],contracts:r['Contratos asociados'],value:r['Valor (millones $)'],physicalExec:r['Avance físico ejecutado']===''?'':Number(r['Avance físico ejecutado']),physicalPlan:r['Avance físico programado']===''?'':Number(r['Avance físico programado']),financial:r['Avance financiero']===''?'':Number(r['Avance financiero']),studies:r['Estudios y diseños'],cutoff:r['Fecha de corte']||'',source:r['Fuente de la información'],decision:r['Decisión requerida'],review:r['Revisión de la información'],
